@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Simulador de capacidad instalada | Proyectos turísticos</title>
+<style>
+:root{--navy:#17365d;--blue:#2463a6;--teal:#168b83;--bg:#f3f6fa;--ink:#243247;--muted:#63738a;--line:#dbe3ed;--white:#fff;--warn:#a85a08}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "Segoe UI",Arial,sans-serif}
+header{background:linear-gradient(120deg,#17365d,#245c89);color:white;padding:28px 22px}
+.wrap{max-width:1180px;margin:auto;padding:0 18px}h1{font-size:clamp(24px,4vw,34px);margin:0 0 6px}header p{margin:0;color:#e4edf7}
+main{padding:22px 0 40px}.intro{background:#eaf2fb;border-left:4px solid var(--blue);padding:13px 16px;border-radius:8px;margin-bottom:18px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.panel,.results,.comparison{background:var(--white);border:1px solid var(--line);border-radius:13px;padding:18px;box-shadow:0 3px 12px #17365d0a}
+.panel h2,.results h2,.comparison h2{color:var(--navy);font-size:20px;margin:0 0 14px}
+.fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+label{display:block;font-size:13px;font-weight:650;color:#40516a;margin-bottom:5px}
+input{width:100%;padding:10px 11px;border:1px solid #cbd6e2;border-radius:7px;font:inherit;color:var(--ink);background:#fff}
+input:focus{outline:2px solid #b7d3f2;border-color:var(--blue)}
+small.hint{display:block;color:var(--muted);font-size:11px;font-weight:400;margin-top:3px}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0}
+button{border:0;border-radius:8px;padding:11px 16px;font-weight:700;font-size:14px;cursor:pointer}
+.primary{background:var(--blue);color:white}.secondary{background:#e5edf6;color:var(--navy)}.dark{background:var(--navy);color:white}
+.results{margin-top:18px}.metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.metric{background:#f5f8fc;border:1px solid var(--line);border-radius:9px;padding:12px}
+.metric span{display:block;color:var(--muted);font-size:12px}.metric strong{display:block;color:var(--navy);font-size:22px;margin-top:3px;overflow-wrap:anywhere}
+.bar-wrap{margin:15px 0}.bar-head{display:flex;justify-content:space-between;font-size:13px;font-weight:650;margin-bottom:5px}.bar{height:12px;background:#e8edf3;border-radius:20px;overflow:hidden}.fill{height:100%;background:var(--teal);width:0%;transition:width .2s}
+table{border-collapse:collapse;width:100%;font-size:14px;margin-top:8px}th,td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--line)}th{color:var(--muted);font-weight:650;background:#f7f9fc}td:last-child,th:last-child{text-align:right}
+.note{font-size:12px;color:var(--muted);margin-top:12px}.warning{color:var(--warn);font-weight:650;margin-top:10px}
+.comparison{margin-top:18px;overflow-x:auto}.comparison table{min-width:560px}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:0 15px 25px}
+@media(max-width:800px){.grid{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:430px){.fields{grid-template-columns:1fr}.metrics{grid-template-columns:1fr 1fr}.metric strong{font-size:19px}}
+@media print{body{background:#fff}.actions{display:none}.panel,.results,.comparison{box-shadow:none;break-inside:avoid}header{background:#fff;color:#17365d;border-bottom:2px solid #17365d}header p{color:#40516a}}
+</style>
+</head>
+<body>
+<header><div class="wrap"><h1>Simulador de capacidad instalada</h1><p>Herramienta didáctica adaptable a cualquier tipología de proyecto turístico</p></div></header>
+<main class="wrap">
+<div class="intro"><b>Instrucciones:</b> modifica los datos de cada proyecto. Los resultados se actualizan automáticamente. Puedes comparar dos proyectos de cualquier tipología turística, cambiar sus nombres y definir la unidad de producción o servicio, imprimir el análisis o descargar los resultados en CSV. Funciona sin conexión a internet.</div>
+<div class="grid">
+<section class="panel" id="restaurant">
+<h2 id="r_title">Proyecto 1</h2>
+<div class="fields">
+<div style="grid-column:1/-1"><label for="r_name">Nombre del proyecto</label><input id="r_name" type="text" value="Proyecto turístico 1"></div>
+<div style="grid-column:1/-1"><label for="r_unit">Unidad de producción o servicio</label><input id="r_unit" type="text" value="servicios" placeholder="Ej.: huéspedes, pasajeros, recorridos, platos, alquileres"></div>
+<div><label for="r_capacity">Capacidad simultánea (unidades)</label><input id="r_capacity" type="number" min="1" step="1" value="60"></div>
+<div><label for="r_rotations">Rotaciones / turnos por día</label><input id="r_rotations" type="number" min="0.1" step="0.1" value="2"></div>
+<div><label for="r_days">Días de operación al mes</label><input id="r_days" type="number" min="1" step="1" value="26"></div>
+<div><label for="r_hours">Horas de operación al día</label><input id="r_hours" type="number" min="0.1" step="0.1" value="10"></div>
+<div><label for="r_factor">Factor de capacidad efectiva (%)</label><input id="r_factor" type="number" min="1" max="100" step="1" value="85"><small class="hint">Descuenta limpieza, mantenimiento y restricciones operativas.</small></div>
+<div><label for="r_real">Producción / servicios reales al mes</label><input id="r_real" type="number" min="0" step="1" value="2100"></div>
+<div><label for="r_ticket">Ingreso promedio por unidad ($)</label><input id="r_ticket" type="number" min="0" step="0.01" value="15"></div>
+<div><label for="r_invest">Inversión total ($)</label><input id="r_invest" type="number" min="0.01" step="0.01" value="120000"></div>
+<div><label for="r_avail">Disponibilidad OEE (%)</label><input id="r_avail" type="number" min="0" max="100" step="0.1" value="95"></div>
+<div><label for="r_perf">Rendimiento OEE (%)</label><input id="r_perf" type="number" min="0" max="100" step="0.1" value="85"></div>
+<div><label for="r_quality">Calidad OEE (%)</label><input id="r_quality" type="number" min="0" max="100" step="0.1" value="98"></div>
+</div><div class="warning" id="r_warning" aria-live="polite"></div>
+</section>
+<section class="panel" id="center">
+<h2 id="c_title">Proyecto 2</h2>
+<div class="fields">
+<div style="grid-column:1/-1"><label for="c_name">Nombre del proyecto</label><input id="c_name" type="text" value="Proyecto turístico 2"></div>
+<div style="grid-column:1/-1"><label for="c_unit">Unidad de producción o servicio</label><input id="c_unit" type="text" value="servicios" placeholder="Ej.: huéspedes, pasajeros, recorridos, platos, alquileres"></div>
+<div><label for="c_capacity">Capacidad simultánea (unidades)</label><input id="c_capacity" type="number" min="1" step="1" value="80"></div>
+<div><label for="c_rotations">Rotaciones / turnos por día</label><input id="c_rotations" type="number" min="0.1" step="0.1" value="2"></div>
+<div><label for="c_days">Días de operación al mes</label><input id="c_days" type="number" min="1" step="1" value="26"></div>
+<div><label for="c_hours">Horas de operación al día</label><input id="c_hours" type="number" min="0.1" step="0.1" value="10"></div>
+<div><label for="c_factor">Factor de capacidad efectiva (%)</label><input id="c_factor" type="number" min="1" max="100" step="1" value="85"><small class="hint">Considera clima, mantenimiento y disponibilidad de personal.</small></div>
+<div><label for="c_real">Producción / servicios reales al mes</label><input id="c_real" type="number" min="0" step="1" value="2800"></div>
+<div><label for="c_ticket">Ingreso promedio por unidad ($)</label><input id="c_ticket" type="number" min="0" step="0.01" value="12"></div>
+<div><label for="c_invest">Inversión total ($)</label><input id="c_invest" type="number" min="0.01" step="0.01" value="300000"></div>
+<div><label for="c_avail">Disponibilidad OEE (%)</label><input id="c_avail" type="number" min="0" max="100" step="0.1" value="90"></div>
+<div><label for="c_perf">Rendimiento OEE (%)</label><input id="c_perf" type="number" min="0" max="100" step="0.1" value="88"></div>
+<div><label for="c_quality">Calidad OEE (%)</label><input id="c_quality" type="number" min="0" max="100" step="0.1" value="97"></div>
+</div><div class="warning" id="c_warning" aria-live="polite"></div>
+</section>
+</div>
+<div class="actions">
+<button class="primary" id="download">Descargar resultados CSV</button>
+<button class="secondary" onclick="window.print()">Imprimir / Guardar como PDF</button>
+<button class="secondary" id="reset">Restablecer valores iniciales</button>
+</div>
+<section class="results">
+<h2>Resultados calculados</h2>
+<div class="grid">
+<div><h3>Proyecto 1</h3><div class="metrics" id="r_metrics"></div><div class="bar-wrap"><div class="bar-head"><span>Utilización de capacidad efectiva</span><span id="r_barlabel"></span></div><div class="bar"><div class="fill" id="r_bar"></div></div></div><div id="r_table"></div></div>
+<div><h3>Proyecto 2</h3><div class="metrics" id="c_metrics"></div><div class="bar-wrap"><div class="bar-head"><span>Utilización de capacidad efectiva</span><span id="c_barlabel"></span></div><div class="bar"><div class="fill" id="c_bar"></div></div></div><div id="c_table"></div></div>
+</div>
+<p class="note">Fórmulas: capacidad instalada = capacidad simultánea × rotaciones diarias × días de operación; capacidad efectiva = capacidad instalada × factor efectivo; utilización = producción real ÷ capacidad efectiva × 100; producción por hora = producción real ÷ horas mensuales de operación; productividad real = ingresos mensuales ÷ inversión; eficiencia potencial y real = inversión ÷ unidades potenciales y reales, respectivamente; OEE = disponibilidad × rendimiento × calidad.</p>
+</section>
+<section class="comparison"><h2>Comparación de proyectos</h2><div id="comparison"></div></section>
+<div class="intro" style="margin-top:18px"><b>Precauciones de interpretación:</b> los valores son supuestos didácticos, no datos observados. La productividad calculada es una razón de ingresos mensuales respecto de la inversión, no una medida de utilidad ni rentabilidad. Para evaluar viabilidad financiera se requieren costos, flujos de caja, VAN, TIR y periodo de recuperación. El OEE procede del ámbito de gestión de equipos; aquí se presenta como adaptación pedagógica y sus componentes deben definirse con criterios observables para cada servicio.</div>
+</main>
+<footer>Simulador académico independiente · Aplicable a alojamiento, alimentos y bebidas, transporte, intermediación, recreación, eventos, turismo comunitario y otros proyectos turísticos</footer>
+<script>
+const ids=['capacity','rotations','days','hours','factor','real','ticket','invest','avail','perf','quality'];
+const names={r:'Proyecto turístico 1',c:'Proyecto turístico 2'};
+const units={r:'servicios',c:'servicios'};
+function updateIdentity(){for(const p of ['r','c']){const name=document.getElementById(p+'_name').value.trim()||('Proyecto '+(p==='r'?'1':'2'));const unit=document.getElementById(p+'_unit').value.trim()||'unidades';names[p]=name;units[p]=unit;document.getElementById(p+'_title').textContent=(p==='r'?'1. ':'2. ')+name;const heading=document.querySelector('#'+(p==='r'?'r_metrics':'c_metrics')).parentElement.querySelector('h3');if(heading)heading.textContent=name;}}
+const defaults={
+r:{capacity:60,rotations:2,days:26,hours:10,factor:85,real:2100,ticket:15,invest:120000,avail:95,perf:85,quality:98},
+c:{capacity:80,rotations:2,days:26,hours:10,factor:85,real:2800,ticket:12,invest:300000,avail:90,perf:88,quality:97}
+};
+let latest={};
+const num=(p,k)=>Number(document.getElementById(p+'_'+k).value);
+const fmt=(v,d=2)=>Number.isFinite(v)?v.toLocaleString('es-EC',{minimumFractionDigits:d,maximumFractionDigits:d}):'—';
+const money=v=>'$'+fmt(v);
+function calculate(p){
+ const x={};ids.forEach(k=>x[k]=num(p,k));
+ const errors=[];
+ ids.forEach(k=>{if(!Number.isFinite(x[k])||x[k]<0)errors.push('Revisa los valores ingresados.');});
+ ['capacity','rotations','days','hours','invest'].forEach(k=>{if(x[k]<=0)errors.push('Plazas, rotaciones, días, horas e inversión deben ser mayores que cero.');});
+ ['factor','avail','perf','quality'].forEach(k=>{if(x[k]>100)errors.push('Los porcentajes no pueden superar el 100 %.');});
+ const installed=x.capacity*x.rotations*x.days;
+ const effective=installed*x.factor/100;
+ if(x.real>effective)errors.push('La producción real supera la capacidad efectiva. Revisa los datos.');
+ document.getElementById(p+'_warning').textContent=[...new Set(errors)].join(' ');
+ if(errors.length){document.getElementById(p+'_metrics').innerHTML='<div class="metric"><span>Estado</span><strong style="font-size:15px">Datos por revisar</strong></div>';document.getElementById(p+'_table').innerHTML='';document.getElementById(p+'_bar').style.width='0%';document.getElementById(p+'_barlabel').textContent='—';return null;}
+ const revenue=x.real*x.ticket, utilization=effective?x.real/effective*100:0;
+ const hoursProduct=x.real/(x.hours*x.days), productivity=revenue/x.invest;
+ const potentialEfficiency=x.invest/installed, realEfficiency=x.real?x.invest/x.real:0;
+ const oee=x.avail/100*x.perf/100*x.quality/100*100;
+ const d={...x,installed,effective,revenue,utilization,hoursProduct,productivity,potentialEfficiency,realEfficiency,oee,unused:effective-x.real};
+ latest[p]=d;
+ const metrics=[['Capacidad instalada ('+units[p]+')',fmt(installed,0)],['Capacidad efectiva ('+units[p]+')',fmt(effective,0)],['Producción real ('+units[p]+'/mes)',fmt(x.real,0)],['Ingresos mensuales',money(revenue)],['Productividad real',fmt(productivity,4)],['OEE adaptado',fmt(oee)+' %']];
+ document.getElementById(p+'_metrics').innerHTML=metrics.map(([a,b])=>`<div class="metric"><span>${a}</span><strong>${b}</strong></div>`).join('');
+ document.getElementById(p+'_bar').style.width=Math.min(100,utilization)+'%';
+ document.getElementById(p+'_barlabel').textContent=fmt(utilization)+' %';
+ const rows=[['Utilización',fmt(utilization)+' %'],['Producción por hora de operación',fmt(hoursProduct)],['Productividad real (ingresos / inversión)',fmt(productivity,4)],['Eficiencia potencial (inversión / capacidad instalada)',money(potentialEfficiency)],['Eficiencia real (inversión / producción real)',x.real?money(realEfficiency):'No aplica'],['Capacidad efectiva no utilizada',fmt(d.unused,0)+' '+units[p]],['OEE adaptado',fmt(oee)+' %']];
+ document.getElementById(p+'_table').innerHTML='<table><tbody>'+rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('')+'</tbody></table>';
+ return d;
+}
+function render(){
+ updateIdentity();
+ const r=calculate('r'),c=calculate('c');
+ const comp=document.getElementById('comparison');
+ if(!r||!c){comp.innerHTML='<p>Corrige los datos para visualizar la comparación.</p>';return;}
+ const rows=[['Capacidad instalada ('+units.r+' / '+units.c+')',fmt(r.installed,0),fmt(c.installed,0)],['Capacidad efectiva ('+units.r+' / '+units.c+')',fmt(r.effective,0),fmt(c.effective,0)],['Producción real ('+units.r+' / '+units.c+')',fmt(r.real,0),fmt(c.real,0)],['Utilización',fmt(r.utilization)+' %',fmt(c.utilization)+' %'],['Ingresos mensuales',money(r.revenue),money(c.revenue)],['Productividad real',fmt(r.productivity,4),fmt(c.productivity,4)],['OEE adaptado',fmt(r.oee)+' %',fmt(c.oee)+' %']];
+ comp.innerHTML='<table><thead><tr><th>Indicador</th><th>Proyecto 1</th><th>Proyecto 2</th></tr></thead><tbody>'+rows.map(a=>`<tr><td>${a[0]}</td><td>${a[1]}</td><td>${a[2]}</td></tr>`).join('')+'</tbody></table>';
+}
+function reset(){for(const p of ['r','c']){for(const k of ids)document.getElementById(p+'_'+k).value=defaults[p][k];document.getElementById(p+'_name').value=p==='r'?'Proyecto turístico 1':'Proyecto turístico 2';document.getElementById(p+'_unit').value='servicios';}render();}
+document.querySelectorAll('input').forEach(el=>el.addEventListener('input',render));
+document.getElementById('reset').addEventListener('click',reset);
+document.getElementById('download').addEventListener('click',()=>{
+ render();if(!latest.r||!latest.c){alert('Corrige los datos antes de descargar.');return;}
+ const labels={capacity:'Plazas simultáneas',rotations:'Rotaciones por día',days:'Días de operación',hours:'Horas diarias',factor:'Factor efectivo (%)',real:'Producción real mensual',ticket:'Ingreso promedio ($)',invest:'Inversión ($)',avail:'Disponibilidad OEE (%)',perf:'Rendimiento OEE (%)',quality:'Calidad OEE (%)',installed:'Capacidad instalada',effective:'Capacidad efectiva',revenue:'Ingresos mensuales ($)',utilization:'Utilización (%)',hoursProduct:'Horas-producto',productivity:'Productividad real',potentialEfficiency:'Eficiencia potencial ($/unidad)',realEfficiency:'Eficiencia real ($/unidad)',oee:'OEE adaptado (%)',unused:'Capacidad efectiva no utilizada'};
+ const keys=Object.keys(labels), lines=[['Indicador',names.r,names.c],...keys.map(k=>[labels[k],latest.r[k],latest.c[k]])];
+ const csv='\uFEFF'+lines.map(row=>row.map(v=>'"'+String(v??'').replaceAll('"','""')+'"').join(';')).join('\r\n');
+ const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'}),url=URL.createObjectURL(blob),a=document.createElement('a');
+ a.href=url;a.download='resultados_simulador_capacidad_turistica.csv';a.click();URL.revokeObjectURL(url);
+});
+render();
+</script>
+</body></html>
